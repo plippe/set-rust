@@ -3,8 +3,17 @@ use rand::distributions::{Distribution, Standard};
 use rand::rngs::StdRng;
 use rand::Rng;
 use rand::SeedableRng;
+use std::convert::TryFrom;
 
-#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+#[derive(Debug)]
+enum Error {
+    SetNumberInvalid,
+    SetColorInvalid,
+    SetShapeInvalid,
+    SetTextureInvalid,
+}
+
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
 enum Number {
     One,
     Two,
@@ -22,7 +31,7 @@ impl Distribution<Number> for Standard {
     }
 }
 
-#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
 enum Color {
     Green,
     Purple,
@@ -40,7 +49,7 @@ impl Distribution<Color> for Standard {
     }
 }
 
-#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
 enum Shape {
     Diamond,
     Oval,
@@ -58,7 +67,7 @@ impl Distribution<Shape> for Standard {
     }
 }
 
-#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
 enum Texture {
     Filled,
     Hollow,
@@ -84,45 +93,6 @@ struct Card {
     texture: Texture,
 }
 
-impl Card {
-    fn is_same_attribute<A: Eq>(
-        card1: &Card,
-        card2: &Card,
-        card3: &Card,
-        get_attribute: fn(&Card) -> A,
-    ) -> bool {
-        get_attribute(card1) == get_attribute(card2) && get_attribute(card1) == get_attribute(card3)
-    }
-
-    fn is_different_attribute<A: Eq>(
-        card1: &Card,
-        card2: &Card,
-        card3: &Card,
-        get_attribute: fn(&Card) -> A,
-    ) -> bool {
-        get_attribute(card1) != get_attribute(card2)
-            && get_attribute(card1) != get_attribute(card3)
-            && get_attribute(card2) != get_attribute(card3)
-    }
-
-    fn is_same_or_different_attribute<A: Eq>(
-        card1: &Card,
-        card2: &Card,
-        card3: &Card,
-        get_attribute: fn(&Card) -> A,
-    ) -> bool {
-        Self::is_same_attribute(card1, card2, card3, get_attribute)
-            || Self::is_different_attribute(card1, card2, card3, get_attribute)
-    }
-
-    fn is_set(card1: &Card, card2: &Card, card3: &Card) -> bool {
-        Self::is_same_or_different_attribute(card1, card2, card3, |c: &Card| c.number)
-            && Self::is_same_or_different_attribute(card1, card2, card3, |c: &Card| c.color)
-            && Self::is_same_or_different_attribute(card1, card2, card3, |c: &Card| c.shape)
-            && Self::is_same_or_different_attribute(card1, card2, card3, |c: &Card| c.texture)
-    }
-}
-
 impl Distribution<Card> for Standard {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Card {
         Card {
@@ -134,18 +104,64 @@ impl Distribution<Card> for Standard {
     }
 }
 
+#[derive(Debug)]
+struct Set(Card, Card, Card);
+
+impl TryFrom<(Card, Card, Card)> for Set {
+    type Error = Vec<Error>;
+
+    fn try_from(cards: (Card, Card, Card)) -> Result<Self, Self::Error> {
+        fn validate_attribute<A: Clone + Eq + std::hash::Hash, B>(
+            cards: (Card, Card, Card),
+            get_attribute: fn(&Card) -> A,
+            get_error: fn() -> B,
+        ) -> Result<(), B> {
+            let bad_count = 2;
+            let count = vec![
+                get_attribute(&cards.0),
+                get_attribute(&cards.1),
+                get_attribute(&cards.2),
+            ]
+            .into_iter()
+            .unique()
+            .count();
+
+            if count == bad_count {
+                Err(get_error())
+            } else {
+                Ok(())
+            }
+        }
+
+        match (
+            validate_attribute(cards, |c| c.number, || Error::SetNumberInvalid),
+            validate_attribute(cards, |c| c.color, || Error::SetColorInvalid),
+            validate_attribute(cards, |c| c.shape, || Error::SetShapeInvalid),
+            validate_attribute(cards, |c| c.texture, || Error::SetTextureInvalid),
+        ) {
+            (Ok(()), Ok(()), Ok(()), Ok(())) => Ok(Set(cards.0, cards.1, cards.2)),
+            (number, color, shape, texture) => {
+                let errs = vec![number, color, shape, texture]
+                    .into_iter()
+                    .filter_map(Result::err)
+                    .collect();
+
+                Err(errs)
+            }
+        }
+    }
+}
+
 fn main() {
     println!("Hello, world!");
 
     let mut rng = StdRng::seed_from_u64(0);
     let cards = (0..16).map(|_| rng.gen::<Card>());
-    let sets = cards
+    cards
         .combinations(3)
         .map(|cs| match cs[..] {
-            [c1, c2, c3] => (c1, c2, c3),
+            [c1, c2, c3] => Set::try_from((c1, c2, c3)),
             _ => unreachable!(),
         })
-        .filter(|(c1, c2, c3)| Card::is_set(c1, c2, c3));
-
-    sets.for_each(|(c1, c2, c3)| println!("Set:\n - {:?}\n - {:?}\n - {:?}", c1, c2, c3));
+        .for_each(|r| println!("{:?}", r));
 }
