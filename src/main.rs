@@ -9,8 +9,8 @@ use std::convert::TryFrom;
 enum Error {
     SetNumberInvalid,
     SetColorInvalid,
-    SetShapeInvalid,
-    SetTextureInvalid,
+    SetSymbolInvalid,
+    SetShadingInvalid,
 }
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
@@ -50,36 +50,36 @@ impl Distribution<Color> for Standard {
 }
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
-enum Shape {
+enum Symbol {
     Diamond,
     Oval,
     Squiggle,
 }
 
-impl Distribution<Shape> for Standard {
-    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Shape {
+impl Distribution<Symbol> for Standard {
+    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Symbol {
         match rng.gen::<u8>() % 3 {
-            0 => Shape::Diamond,
-            1 => Shape::Oval,
-            2 => Shape::Squiggle,
+            0 => Symbol::Diamond,
+            1 => Symbol::Oval,
+            2 => Symbol::Squiggle,
             _ => unreachable!(),
         }
     }
 }
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
-enum Texture {
-    Filled,
-    Hollow,
-    Shaded,
+enum Shading {
+    Open,
+    Solid,
+    Stripe,
 }
 
-impl Distribution<Texture> for Standard {
-    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Texture {
+impl Distribution<Shading> for Standard {
+    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Shading {
         match rng.gen::<u8>() % 3 {
-            0 => Texture::Filled,
-            1 => Texture::Hollow,
-            2 => Texture::Shaded,
+            0 => Shading::Open,
+            1 => Shading::Solid,
+            2 => Shading::Stripe,
             _ => unreachable!(),
         }
     }
@@ -89,8 +89,8 @@ impl Distribution<Texture> for Standard {
 struct Card {
     number: Number,
     color: Color,
-    shape: Shape,
-    texture: Texture,
+    symbol: Symbol,
+    shading: Shading,
 }
 
 impl Distribution<Card> for Standard {
@@ -98,8 +98,8 @@ impl Distribution<Card> for Standard {
         Card {
             number: rng.gen(),
             color: rng.gen(),
-            shape: rng.gen(),
-            texture: rng.gen(),
+            symbol: rng.gen(),
+            shading: rng.gen(),
         }
     }
 }
@@ -136,12 +136,12 @@ impl TryFrom<(Card, Card, Card)> for Set {
         match (
             validate_attribute(cards, |c| c.number, || Error::SetNumberInvalid),
             validate_attribute(cards, |c| c.color, || Error::SetColorInvalid),
-            validate_attribute(cards, |c| c.shape, || Error::SetShapeInvalid),
-            validate_attribute(cards, |c| c.texture, || Error::SetTextureInvalid),
+            validate_attribute(cards, |c| c.symbol, || Error::SetSymbolInvalid),
+            validate_attribute(cards, |c| c.shading, || Error::SetShadingInvalid),
         ) {
             (Ok(()), Ok(()), Ok(()), Ok(())) => Ok(Set(cards.0, cards.1, cards.2)),
-            (number, color, shape, texture) => {
-                let errs = vec![number, color, shape, texture]
+            (number, color, symbol, shading) => {
+                let errs = vec![number, color, symbol, shading]
                     .into_iter()
                     .filter_map(Result::err)
                     .collect();
