@@ -10,11 +10,6 @@ pub enum Shading {
 
 impl Distribution<Shading> for Standard {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Shading {
-        match rng.gen::<u8>() % 3 {
-            0 => Shading::Open,
-            1 => Shading::Solid,
-            2 => Shading::Stripe,
-            _ => unreachable!(),
-        }
+        super::gen_one_of(rng, &[Shading::Open, Shading::Solid, Shading::Stripe])
     }
 }

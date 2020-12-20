@@ -10,11 +10,6 @@ pub enum Symbol {
 
 impl Distribution<Symbol> for Standard {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Symbol {
-        match rng.gen::<u8>() % 3 {
-            0 => Symbol::Diamond,
-            1 => Symbol::Oval,
-            2 => Symbol::Squiggle,
-            _ => unreachable!(),
-        }
+        super::gen_one_of(rng, &[Symbol::Diamond, Symbol::Oval, Symbol::Squiggle])
     }
 }

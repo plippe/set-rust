@@ -10,11 +10,6 @@ pub enum Color {
 
 impl Distribution<Color> for Standard {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Color {
-        match rng.gen::<u8>() % 3 {
-            0 => Color::Green,
-            1 => Color::Purple,
-            2 => Color::Red,
-            _ => unreachable!(),
-        }
+        super::gen_one_of(rng, &[Color::Green, Color::Purple, Color::Red])
     }
 }

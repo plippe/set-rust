@@ -1,9 +1,11 @@
+use rand::Rng;
+
 pub mod color;
 pub mod number;
 pub mod shading;
 pub mod symbol;
 
-pub use self::color::Color;
-pub use self::number::Number;
-pub use self::shading::Shading;
-pub use self::symbol::Symbol;
+fn gen_one_of<R: Rng + ?Sized, A: Copy>(rng: &mut R, arg: &[A]) -> A {
+    let index = rng.gen_range(0, arg.len());
+    arg[index]
+}

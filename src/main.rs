@@ -2,15 +2,14 @@ use itertools::Itertools;
 use rand::rngs::StdRng;
 use rand::Rng;
 use rand::SeedableRng;
-use std::convert::TryFrom;
 
 mod attributes;
 mod cards;
 mod errors;
 mod sets;
 
-use crate::cards::Card;
-use crate::sets::Set;
+use crate::cards::card::Card;
+use crate::sets::set::Set;
 
 fn main() {
     println!("Hello, world!");
@@ -20,7 +19,7 @@ fn main() {
     cards
         .combinations(3)
         .map(|cs| match cs[..] {
-            [c1, c2, c3] => Set::try_from((c1, c2, c3)),
+            [c1, c2, c3] => Set::try_from_cards(c1, c2, c3),
             _ => unreachable!(),
         })
         .for_each(|r| println!("{:?}", r));
