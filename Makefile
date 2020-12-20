@@ -7,5 +7,7 @@ wasm-run:
 wasm-watch:
 	cargo watch \
 		--watch src \
+		--exec fmt \
+		--exec clippy \
 		--shell 'make wasm-build' \
 		--shell 'make wasm-run'
