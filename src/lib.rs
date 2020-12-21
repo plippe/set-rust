@@ -1,5 +1,21 @@
+#![recursion_limit = "512"]
+
 use wasm_bindgen::prelude::*;
 use yew::prelude::*;
+
+mod attributes;
+mod cards;
+mod errors;
+mod sets;
+mod web;
+
+use crate::attributes::color::Color;
+use crate::attributes::number::Number;
+use crate::attributes::shading::Shading;
+use crate::attributes::symbol::Symbol;
+use crate::cards::card::Card;
+
+use crate::web::card_component::CardComponent;
 
 struct Model {
     link: ComponentLink<Self>,
@@ -36,6 +52,20 @@ impl Component for Model {
             <div>
                 <button onclick=self.link.callback(|_| Msg::AddOne)>{ "+1" }</button>
                 <p>{ self.value }</p>
+
+                <div class="container">
+                    <div class="game">
+                        <div class="board">
+                            <CardComponent card=Card::new(Number::One, Color::Green, Symbol::Diamond, Shading::Stripe) />
+                            <CardComponent card=Card::new(Number::Three, Color::Purple, Symbol::Oval, Shading::Solid) />
+                            <CardComponent card=Card::new(Number::Two, Color::Red, Symbol::Squiggle, Shading::Open) />
+
+                            <CardComponent card=Card::new(Number::Two, Color::Green, Symbol::Oval, Shading::Open) />
+                            <CardComponent card=Card::new(Number::One, Color::Purple, Symbol::Diamond, Shading::Solid) />
+                            <CardComponent card=Card::new(Number::Three, Color::Red, Symbol::Squiggle, Shading::Stripe) />
+                        </div>
+                    </div>
+                </div>
             </div>
         }
     }

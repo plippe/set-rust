@@ -1,0 +1,262 @@
+@import url("https://fonts.googleapis.com/css?family=Roboto:400,500,900");
+:root {
+  font-family: 'Roboto', sans-serif;
+  font-size: 16px;
+  color: #333;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.spacer {
+  height: 600px;
+}
+
+.fill-green path, .fill-green rect {
+  stroke: #27ae60;
+}
+
+.fill-purple path, .fill-purple rect {
+  stroke: #8e44ad;
+}
+
+.fill-red path, .fill-red rect {
+  stroke: #e74c3c;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.title {
+  margin: 0;
+  font-size: 4em;
+  font-weight: 900;
+  margin-top: -0.4em;
+}
+.title small {
+  color: #aaa;
+  font-size: .3em;
+  font-weight: 500;
+  margin-left: -1em;
+}
+
+.game {
+  display: flex;
+  margin: 0 auto;
+  padding: 0 10px;
+  justify-content: center;
+  align-items: flex-start;
+}
+@media screen and (max-width: 650px) {
+  .game {
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+  }
+}
+
+.sidebar {
+  display: flex;
+  flex-flow: column wrap;
+}
+
+.options {
+  margin-bottom: 20px;
+}
+
+.log-header {
+  margin: 10px;
+}
+
+.log-container {
+  background: #eee;
+  overflow-y: scroll;
+  flex: 1;
+}
+.log-container::-webkit-scrollbar-track {
+  display: none;
+}
+.log-container::-webkit-scrollbar {
+  width: 10px;
+  background-color: #F5F5F5;
+}
+.log-container::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: #aaa;
+}
+.log-container.log-small {
+  display: none;
+}
+@media screen and (max-width: 650px) {
+  .log-container {
+    width: 100%;
+  }
+  .log-container.log-big {
+    display: none;
+  }
+  .log-container.log-small {
+    display: block;
+  }
+}
+
+.log .entry {
+  display: flex;
+  background: #fafafa;
+  padding: 5px;
+  margin-right: 1px;
+}
+.log .entry.odd {
+  background: #ddd;
+}
+.log .validate {
+  color: #27ae60;
+}
+.log .validate.invalid {
+  color: #e74c3c;
+}
+.log .set {
+  display: flex;
+  width: 50%;
+  margin: 0 5px;
+}
+.log .card {
+  padding: 1px;
+  border-radius: 2px;
+  margin: 2px;
+  cursor: initial;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+.log .card .card-content {
+  padding: 2px;
+  margin-left: -1px;
+}
+.log .card .card-content svg {
+  width: 25%;
+}
+
+.board {
+  display: flex;
+  flex: 1;
+  flex-flow: row wrap;
+  background: #eee;
+  padding: 6px;
+  max-width: 100vh;
+  margin: 0 20px;
+}
+@media screen and (max-width: 650px) {
+  .board {
+    width: 100%;
+  }
+}
+
+.card {
+  margin: 5px;
+  width: calc(33.33% - 10px);
+  padding-top: 20%;
+  cursor: pointer;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 5px 10px -5px rgba(0, 0, 0, 0.2);
+  position: relative;
+  transition: .2s ease-in-out;
+  opacity: 0;
+  perspective: 1000px;
+  transform-origin: left center;
+  transform: rotateY(60deg);
+  transform-style: preserve-3d;
+}
+.card.fadeIn {
+  opacity: 1;
+  transform: rotateY(0deg);
+}
+.card .card-content {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+}
+.card svg {
+  height: 100%;
+  margin: 0 2%;
+}
+.card path, .card rect {
+  stroke-width: 2;
+}
+
+.selected {
+  box-shadow: 0 10px 15px -5px rgba(0, 0, 0, 0.2), inset 0 0 5px 1px #FFEB3B;
+}
+
+.card.highlight:not(.selected) {
+  box-shadow: 0 10px 15px -5px rgba(0, 0, 0, 0.2), inset 0 0 5px 1px #3498db;
+}
+
+button {
+  border: 0;
+  background: #3498db;
+  color: white;
+  padding: 10px 25px;
+  margin: 0 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+button:not(:disabled) {
+  cursor: pointer;
+  transition: .3s;
+}
+button:not(:disabled):hover {
+  background: #258cd1;
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 6px 5px -2px rgba(0, 0, 0, 0.2);
+}
+button.highlight {
+  animation: pulse 1s infinite;
+}
+button:disabled {
+  background: #4aa3df;
+}
+@media screen and (max-width: 400px) {
+  button {
+    padding: 5px 15px;
+  }
+}
+
+.message {
+  position: fixed;
+  top: 0;
+  pointer-events: none;
+  width: 100%;
+  color: #2ECC40;
+  text-shadow: 0 0 5px white;
+}
+.message h1 {
+  text-align: center;
+  font-size: 5em;
+}
+
+.rules .set-example {
+  display: flex;
+  max-width: 600px;
+}
+.rules .set-example .card {
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2), 0 5px 10px -5px rgba(0, 0, 0, 0.2);
+}
+
+@media screen and (max-width: 650px) {
+  #log-big {
+    display: none;
+  }
+}
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 5px 0px #FFEB3B;
+  }
+  50% {
+    box-shadow: 0 0 5px 3px #FFEB3B;
+  }
+}
