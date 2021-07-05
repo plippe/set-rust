@@ -43,10 +43,10 @@ impl CardComponent {
     fn path(&self) -> String {
         match self.props.card.symbol() {
             Symbol::Circle => {
-                "M 50, 50 m -45, 0 a 45,45 0 1,0 90,0 a 45,45 0 1,0 -90,0".to_string()
+                "M 50, 50 m -40, 0 a 40,40 0 1,0 80,0 a 40,40 0 1,0 -80,0".to_string()
             }
             Symbol::Square => "M 10,10 90,10 90,90 10,90 Z".to_string(),
-            Symbol::Triangle => "M 50,10 90,90 10,90 Z".to_string(),
+            Symbol::Triangle => "M 50,15 90,90 10,90 Z".to_string(),
         }
     }
 }
@@ -69,12 +69,12 @@ impl Component for CardComponent {
 
     fn view(&self) -> Html {
         html! {
-            <div>
+            <div class="card p-3">
                 {
                     (0..self.number())
                         .map(|_| {
                             html! {
-                                <svg viewBox="0 0 100 100" width="50px" height="50px" style="border:1px solid #ccc">
+                                <svg viewBox="0 0 100 100" height=format!("{}px", 120 / self.number())>
                                     <defs>
                                         <pattern id= { format!("striped-{}", self.color()) } patternUnits="userSpaceOnUse" width="1" height="7">
                                             <path d="M-1,1 H5" stroke={ self.color() } stroke-width="3" />
@@ -86,12 +86,11 @@ impl Component for CardComponent {
                                         fill={ self.fill() }
                                         stroke={ self.color() }
                                         stroke-width="9" />
-
                                 </svg>
                             }
                         })
                         .collect::<Html>()
-                    }
+                }
             </div>
         }
     }

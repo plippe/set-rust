@@ -21,10 +21,10 @@ impl Component for Index {
 
     fn view(&self) -> Html {
         html! {
-            <>
+            <div class="container">
                 <h1>{ "Set" }</h1>
                 <TableComponent />
-            </>
+            </div>
         }
     }
 }

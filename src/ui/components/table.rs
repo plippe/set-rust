@@ -30,13 +30,18 @@ impl Component for TableComponent {
 
     fn view(&self) -> Html {
         html! {
-            <div>
-                { self.hand.iter().map(|card| html! {
-                    <>
-                        <CardComponent card=card.clone() />
-                        <br />
-                    </>
-                }).collect::<Html>() }
+            <div class="row row-cols-3 row-cols-md-4 g-2">
+                {
+                    self
+                        .hand
+                        .iter()
+                        .map(|card| html! {
+                            <div class="col">
+                                <CardComponent card=card.clone() />
+                            </div>
+                        })
+                        .collect::<Html>()
+                }
             </div>
         }
     }
