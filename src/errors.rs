@@ -1,7 +1,7 @@
 #[derive(Debug)]
 pub enum Error {
-    SetNumberInvalid,
     SetColorInvalid,
-    SetSymbolInvalid,
+    SetNumberInvalid,
     SetShadingInvalid,
+    SetSymbolInvalid,
 }

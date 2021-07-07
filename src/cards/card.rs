@@ -3,7 +3,7 @@ use crate::attributes::number::Number;
 use crate::attributes::shading::Shading;
 use crate::attributes::symbol::Symbol;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Card {
     color: Color,
     number: Number,

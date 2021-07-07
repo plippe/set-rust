@@ -1,7 +1,7 @@
 mod attributes;
 mod cards;
 mod decks;
-pub mod errors;
+mod errors;
 mod sets;
 mod ui;
 

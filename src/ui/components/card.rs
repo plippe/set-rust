@@ -10,9 +10,12 @@ pub struct CardComponent {
     props: CardProps,
 }
 
-#[derive(Properties, Clone)]
+#[derive(Properties, Clone, PartialEq)]
 pub struct CardProps {
     pub card: Card,
+    pub selected: bool,
+    #[prop_or_default]
+    pub onclick: Callback<MouseEvent>,
 }
 
 impl CardComponent {
@@ -63,13 +66,23 @@ impl Component for CardComponent {
         false
     }
 
-    fn change(&mut self, _: Self::Properties) -> ShouldRender {
-        false
+    fn change(&mut self, props: Self::Properties) -> ShouldRender {
+        if self.props == props {
+            false
+        } else {
+            self.props = props;
+            true
+        }
     }
 
     fn view(&self) -> Html {
+        let border = if self.props.selected {
+            "border-dark"
+        } else {
+            ""
+        };
         html! {
-            <div class="card p-3">
+            <div class=format!("card {} p-3", border) onclick=self.props.onclick.clone()>
                 {
                     (0..self.number())
                         .map(|_| {

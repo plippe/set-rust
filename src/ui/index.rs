@@ -1,5 +1,6 @@
 use yew::prelude::*;
 
+use crate::decks::deck::Deck;
 use crate::ui::components::table::TableComponent;
 
 pub struct Index;
@@ -23,7 +24,7 @@ impl Component for Index {
         html! {
             <div class="container">
                 <h1>{ "Set" }</h1>
-                <TableComponent />
+                <TableComponent deck=Deck::new().shuffle() />
             </div>
         }
     }
