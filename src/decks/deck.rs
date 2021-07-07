@@ -27,7 +27,7 @@ impl Deck {
     }
 
     pub fn shuffle(&self) -> Self {
-        let mut rng = StdRng::seed_from_u64(0);
+        let mut rng = StdRng::from_entropy();
 
         let mut cards = self.0.clone();
         cards.shuffle(&mut rng);
