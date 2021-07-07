@@ -1,7 +1,7 @@
-use yew::prelude::*;
+use yew::*;
+use yew_router::prelude::*;
 
-use crate::decks::deck::Deck;
-use crate::ui::components::table::TableComponent;
+use crate::ui::Routes;
 
 pub struct Index;
 impl Component for Index {
@@ -21,11 +21,32 @@ impl Component for Index {
     }
 
     fn view(&self) -> Html {
+        type A = RouterAnchor<Routes>;
+
         html! {
-            <div class="container">
-                <h1>{ "Set" }</h1>
-                <TableComponent deck=Deck::new().shuffle() />
-            </div>
+            <>
+                <nav class="navbar navbar-expand-sm navbar-light bg-light">
+                    <div class="container">
+                        <span class="navbar-brand" />
+                        <a class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
+                            <span class="navbar-toggler-icon"></span>
+                        </a>
+                        <div class="collapse navbar-collapse justify-content-end" id="collapsableNavbar">
+                            <ul class="navbar-nav">
+                                <li class="nav-item">
+                                    <A route=Routes::Index classes="nav-link">{ "New Game" }</A>
+                                </li>
+                                <li class="nav-item">
+                                    <A route=Routes::Instructions classes="nav-link">{ "Instructions" }</A>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+                <div class="container my-3">
+                    <Router<Routes, ()> render=Router::render(|r: Routes| r.view()) />
+                </div>
+            </>
         }
     }
 }

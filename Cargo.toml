@@ -12,3 +12,4 @@ itertools = "0.10.1"
 getrandom = { version = "0.2.3", features = ["js"] }
 rand = "0.8.4"
 yew = "0.18.0"
+yew-router = "0.15.0"

@@ -1,20 +1,22 @@
+pub mod card;
+
 use crate::cards::card::Card;
 use crate::decks::deck::Deck;
 use crate::errors::Error;
 use crate::sets::set::Set;
-use crate::ui::components::card::CardComponent;
+use crate::ui::games::card::CardComponent;
 use yew::prelude::*;
 
 #[derive(Clone, Debug)]
-pub struct TableComponent {
+pub struct Index {
     deal: Vec<Card>,
     selected: Vec<Card>,
     warning: Option<String>,
-    props: TableProps,
+    props: IndexProps,
     link: ComponentLink<Self>,
 }
 
-impl TableComponent {
+impl Index {
     fn toggle_selected(&self, card: &Card) -> Self {
         let mut selected = self.selected.clone();
         if selected.contains(&card) {
@@ -53,7 +55,7 @@ impl TableComponent {
 
         Self {
             deal,
-            props: TableProps { deck },
+            props: IndexProps { deck },
             ..self.clone()
         }
     }
@@ -78,19 +80,19 @@ impl TableComponent {
 }
 
 #[derive(Clone, Copy, Debug)]
-pub enum TableMsgs {
+pub enum IndexMsgs {
     OnCardClick(Card),
     OnWarningCloseClick,
 }
 
 #[derive(Properties, Clone, Debug)]
-pub struct TableProps {
+pub struct IndexProps {
     pub deck: Deck,
 }
 
-impl Component for TableComponent {
-    type Message = TableMsgs;
-    type Properties = TableProps;
+impl Component for Index {
+    type Message = IndexMsgs;
+    type Properties = IndexProps;
 
     fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
         let mut props = props;

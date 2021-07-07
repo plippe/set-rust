@@ -13,6 +13,7 @@ pub struct CardComponent {
 #[derive(Properties, Clone, PartialEq)]
 pub struct CardProps {
     pub card: Card,
+    #[prop_or_default]
     pub selected: bool,
     #[prop_or_default]
     pub onclick: Callback<MouseEvent>,
