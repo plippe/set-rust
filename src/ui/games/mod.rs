@@ -33,8 +33,8 @@ impl Index {
 
     fn extract_set(&self) -> Option<Result<Set, Vec<Error>>> {
         match self.selected.as_slice() {
-            [a, b, c] => Option::Some(Set::try_from_cards(*a, *b, *c)),
-            _ => Option::None,
+            [a, b, c] => Some(Set::try_from_cards(*a, *b, *c)),
+            _ => None,
         }
     }
 
@@ -48,7 +48,7 @@ impl Index {
                 if self.selected.contains(&card) {
                     deck.next()
                 } else {
-                    Option::Some(card)
+                    Some(card)
                 }
             })
             .collect();
@@ -68,7 +68,7 @@ impl Index {
             None => new,
             Some(Err(_)) => Self {
                 selected: Vec::new(),
-                warning: Option::Some("This isn't a valid set".to_owned()),
+                warning: Some("This isn't a valid set".to_owned()),
                 ..new
             },
             Some(Ok(_)) => Self {
@@ -98,7 +98,7 @@ impl Component for Index {
         let mut props = props;
         let deal = (0..12).flat_map(|_| props.deck.next()).collect();
         let selected = Vec::new();
-        let warning = Option::None;
+        let warning = None;
 
         Self {
             deal,
@@ -121,7 +121,7 @@ impl Component for Index {
                 true
             }
             Self::Message::OnWarningCloseClick => {
-                self.warning = Option::None;
+                self.warning = None;
                 true
             }
         }
@@ -135,7 +135,7 @@ impl Component for Index {
 
             self.deal = (0..12).flat_map(|_| props.deck.next()).collect();
             self.selected = Vec::new();
-            self.warning = Option::None;
+            self.warning = None;
             self.props = props;
 
             true

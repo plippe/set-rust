@@ -29,8 +29,8 @@ impl Component for Index {
             <>
                 <h1>{ "Instructions" }</h1>
                 <p>{ "
-                        The object of the game is to identify a SET of 3 cards from 12 cards placed face-up on the
-                        table. Each card has four features, which can vary as follows:
+                    The object of the game is to identify a SET of 3 cards from 12 cards placed face-up on the table.
+                    Each card has four features, which can vary as follows:
                 " }</p>
 
                 <ul>

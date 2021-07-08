@@ -1,7 +1,6 @@
-use yew::*;
-use yew_router::prelude::*;
+use yew::prelude::*;
 
-use crate::ui::Routes;
+use crate::ui::{AppAnchor, AppRouter, Routes};
 
 pub struct Index;
 impl Component for Index {
@@ -21,11 +20,9 @@ impl Component for Index {
     }
 
     fn view(&self) -> Html {
-        type A = RouterAnchor<Routes>;
-
         html! {
             <>
-                <nav class="navbar navbar-expand-sm navbar-light bg-light">
+                <div class="navbar navbar-expand-sm navbar-light bg-light">
                     <div class="container">
                         <span class="navbar-brand" />
                         <a class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
@@ -34,17 +31,17 @@ impl Component for Index {
                         <div class="collapse navbar-collapse justify-content-end" id="collapsableNavbar">
                             <ul class="navbar-nav">
                                 <li class="nav-item">
-                                    <A route=Routes::Index classes="nav-link">{ "New Game" }</A>
+                                    <AppAnchor route=Routes::Index.with_base_uri() classes="nav-link">{ "New Game" }</AppAnchor>
                                 </li>
                                 <li class="nav-item">
-                                    <A route=Routes::Instructions classes="nav-link">{ "Instructions" }</A>
+                                    <AppAnchor route=Routes::Instructions.with_base_uri() classes="nav-link">{ "Instructions" }</AppAnchor>
                                 </li>
                             </ul>
                         </div>
                     </div>
-                </nav>
+                </div>
                 <div class="container my-3">
-                    <Router<Routes, ()> render=Router::render(|r: Routes| r.view()) />
+                    <AppRouter render=AppRouter::render(Routes::render) />
                 </div>
             </>
         }
