@@ -7,7 +7,7 @@ use crate::attributes::shading::Shading;
 use crate::attributes::symbol::Symbol;
 use crate::cards::card::Card;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Deck(Vec<Card>);
 impl Deck {
     pub fn new() -> Self {

@@ -85,7 +85,7 @@ pub enum IndexMsgs {
     OnWarningCloseClick,
 }
 
-#[derive(Properties, Clone, Debug)]
+#[derive(Properties, Clone, Debug, PartialEq)]
 pub struct IndexProps {
     pub deck: Deck,
 }
@@ -127,8 +127,19 @@ impl Component for Index {
         }
     }
 
-    fn change(&mut self, _: Self::Properties) -> ShouldRender {
-        false
+    fn change(&mut self, props: Self::Properties) -> ShouldRender {
+        if self.props == props {
+            false
+        } else {
+            let mut props = props;
+
+            self.deal = (0..12).flat_map(|_| props.deck.next()).collect();
+            self.selected = Vec::new();
+            self.warning = Option::None;
+            self.props = props;
+
+            true
+        }
     }
 
     fn view(&self) -> Html {
