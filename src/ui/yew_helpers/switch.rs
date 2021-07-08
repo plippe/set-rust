@@ -18,7 +18,7 @@ impl<A> SwitchWithBaseUri<A> {
             .base_uri()
             .ok()
             .flatten()
-            .unwrap_or("/".to_owned());
+            .unwrap_or_else(|| "/".to_owned());
 
         let mut path = Url::new(&href).unwrap().pathname();
         if path.ends_with('/') {
