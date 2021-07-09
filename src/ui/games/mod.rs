@@ -2,15 +2,14 @@ pub mod card;
 
 use yew::prelude::*;
 
-use crate::cards::card::Card;
-use crate::cards::pack::Pack;
-use crate::cards::set::Set;
+use crate::cards::{card::Card, hand::Hand, set::Set, stock::Stock};
 use crate::errors::Error;
 use crate::ui::games::card::CardComponent;
 
 #[derive(Clone, Debug)]
 pub struct Index {
-    pack: Pack,
+    stock: Stock,
+    hand: Hand,
     selected: Vec<Card>,
     warning: Option<String>,
     props: IndexProps,
@@ -41,20 +40,24 @@ impl Index {
 
     fn select(&self, card: &Card) -> Self {
         let new = self.toggle_selected(card);
-        let set = new.extract_set();
 
-        match set {
+        match new.extract_set() {
             None => new,
             Some(Err(_)) => Self {
                 selected: Vec::new(),
                 warning: Some("This isn't a valid set".to_owned()),
                 ..new
             },
-            Some(Ok(set)) => Self {
-                pack: self.pack.swap_selected(set),
-                selected: Vec::new(),
-                ..new
-            },
+            Some(Ok(set)) => {
+                let (stock, hand) = new.hand.swap(&new.stock, &set);
+
+                Self {
+                    stock,
+                    hand,
+                    selected: Vec::new(),
+                    ..new
+                }
+            }
         }
     }
 }
@@ -75,8 +78,12 @@ impl Component for Index {
     type Properties = IndexProps;
 
     fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
+        let stock = Stock::from_seed(props.seed);
+        let (stock, hand) = Hand::from_stock(&stock);
+
         Self {
-            pack: Pack::from_seed(props.seed),
+            stock,
+            hand,
             selected: Vec::new(),
             warning: None,
             props,
@@ -89,7 +96,8 @@ impl Component for Index {
             Self::Message::OnCardClick(card) => {
                 let new = self.select(&card);
 
-                self.pack = new.pack;
+                self.stock = new.stock;
+                self.hand = new.hand;
                 self.selected = new.selected;
                 self.warning = new.warning;
                 true
@@ -105,7 +113,11 @@ impl Component for Index {
         if self.props == props {
             false
         } else {
-            self.pack = Pack::from_seed(props.seed);
+            let stock = Stock::from_seed(props.seed);
+            let (stock, hand) = Hand::from_stock(&stock);
+
+            self.stock = stock;
+            self.hand = hand;
             self.selected = Vec::new();
             self.warning = None;
             self.props = props;
@@ -120,8 +132,8 @@ impl Component for Index {
                 <div class="row row-cols-3 row-cols-md-4 g-2">
                     {
                         self
-                            .pack
-                            .hand()
+                            .hand
+                            .cards()
                             .iter()
                             .map(|card| {
                                 let msg = Self::Message::OnCardClick(*card);
