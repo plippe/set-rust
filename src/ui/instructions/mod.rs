@@ -1,13 +1,13 @@
-use crate::attributes::color::Color;
-use crate::attributes::number::Number;
-use crate::attributes::shading::Shading;
-use crate::attributes::symbol::Symbol;
-use crate::cards::card::Card;
-use crate::ui::games::card::CardComponent;
 use yew::prelude::*;
 
-pub struct Index;
+use crate::cards::card::Card;
+use crate::cards::pips::color::Color;
+use crate::cards::pips::number::Number;
+use crate::cards::pips::shading::Shading;
+use crate::cards::pips::symbol::Symbol;
+use crate::ui::games::card::CardComponent;
 
+pub struct Index;
 impl Component for Index {
     type Message = ();
     type Properties = ();

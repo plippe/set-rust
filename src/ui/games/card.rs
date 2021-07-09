@@ -1,10 +1,10 @@
 use yew::prelude::*;
 
-use crate::attributes::color::Color;
-use crate::attributes::number::Number;
-use crate::attributes::shading::Shading;
-use crate::attributes::symbol::Symbol;
 use crate::cards::card::Card;
+use crate::cards::pips::color::Color;
+use crate::cards::pips::number::Number;
+use crate::cards::pips::shading::Shading;
+use crate::cards::pips::symbol::Symbol;
 
 pub struct CardComponent {
     props: CardProps,

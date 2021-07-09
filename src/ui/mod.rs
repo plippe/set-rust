@@ -3,7 +3,8 @@ mod index;
 mod instructions;
 mod yew_helpers;
 
-use crate::decks::deck::Deck;
+use rand::prelude::*;
+use rand::rngs::StdRng;
 use yew::prelude::*;
 use yew_helpers::switch::SwitchWithBaseUri;
 use yew_router::prelude::*;
@@ -19,7 +20,7 @@ pub enum Routes {
 impl Routes {
     pub fn render(route: SwitchWithBaseUri<Self>) -> Html {
         match route.underlying() {
-            Routes::Index => html! { <games::Index deck=Deck::new().shuffle() /> },
+            Routes::Index => html! { <games::Index seed=StdRng::from_entropy().gen::<u64>() /> },
             Routes::Instructions => html! { <instructions::Index /> },
         }
     }

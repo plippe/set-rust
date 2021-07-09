@@ -1,9 +1,12 @@
-use crate::attributes::color::Color;
-use crate::attributes::number::Number;
-use crate::attributes::shading::Shading;
-use crate::attributes::symbol::Symbol;
+use rand::distributions::{Distribution, Standard};
+use rand::Rng;
 
-#[derive(Debug, Clone, Copy, PartialEq)]
+use crate::cards::pips::color::Color;
+use crate::cards::pips::number::Number;
+use crate::cards::pips::shading::Shading;
+use crate::cards::pips::symbol::Symbol;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Card {
     color: Color,
     number: Number,
@@ -31,5 +34,11 @@ impl Card {
     }
     pub fn symbol(&self) -> Symbol {
         self.symbol
+    }
+}
+
+impl Distribution<Card> for Standard {
+    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Card {
+        Card::new(rng.gen(), rng.gen(), rng.gen(), rng.gen())
     }
 }

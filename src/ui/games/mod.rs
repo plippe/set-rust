@@ -1,15 +1,16 @@
 pub mod card;
 
-use crate::cards::card::Card;
-use crate::decks::deck::Deck;
-use crate::errors::Error;
-use crate::sets::set::Set;
-use crate::ui::games::card::CardComponent;
 use yew::prelude::*;
+
+use crate::cards::card::Card;
+use crate::cards::pack::Pack;
+use crate::cards::set::Set;
+use crate::errors::Error;
+use crate::ui::games::card::CardComponent;
 
 #[derive(Clone, Debug)]
 pub struct Index {
-    deal: Vec<Card>,
+    pack: Pack,
     selected: Vec<Card>,
     warning: Option<String>,
     props: IndexProps,
@@ -38,28 +39,6 @@ impl Index {
         }
     }
 
-    fn swap_selected(&self) -> Self {
-        let mut deck = self.props.deck.clone();
-        let deal = self
-            .deal
-            .clone()
-            .into_iter()
-            .flat_map(|card| {
-                if self.selected.contains(&card) {
-                    deck.next()
-                } else {
-                    Some(card)
-                }
-            })
-            .collect();
-
-        Self {
-            deal,
-            props: IndexProps { deck },
-            ..self.clone()
-        }
-    }
-
     fn select(&self, card: &Card) -> Self {
         let new = self.toggle_selected(card);
         let set = new.extract_set();
@@ -71,9 +50,10 @@ impl Index {
                 warning: Some("This isn't a valid set".to_owned()),
                 ..new
             },
-            Some(Ok(_)) => Self {
+            Some(Ok(set)) => Self {
+                pack: self.pack.swap_selected(set),
                 selected: Vec::new(),
-                ..new.swap_selected()
+                ..new
             },
         }
     }
@@ -87,7 +67,7 @@ pub enum IndexMsgs {
 
 #[derive(Properties, Clone, Debug, PartialEq)]
 pub struct IndexProps {
-    pub deck: Deck,
+    pub seed: u64,
 }
 
 impl Component for Index {
@@ -95,15 +75,10 @@ impl Component for Index {
     type Properties = IndexProps;
 
     fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
-        let mut props = props;
-        let deal = (0..12).flat_map(|_| props.deck.next()).collect();
-        let selected = Vec::new();
-        let warning = None;
-
         Self {
-            deal,
-            selected,
-            warning,
+            pack: Pack::from_seed(props.seed),
+            selected: Vec::new(),
+            warning: None,
             props,
             link,
         }
@@ -114,10 +89,9 @@ impl Component for Index {
             Self::Message::OnCardClick(card) => {
                 let new = self.select(&card);
 
+                self.pack = new.pack;
                 self.selected = new.selected;
                 self.warning = new.warning;
-                self.deal = new.deal;
-                self.props = new.props;
                 true
             }
             Self::Message::OnWarningCloseClick => {
@@ -131,9 +105,7 @@ impl Component for Index {
         if self.props == props {
             false
         } else {
-            let mut props = props;
-
-            self.deal = (0..12).flat_map(|_| props.deck.next()).collect();
+            self.pack = Pack::from_seed(props.seed);
             self.selected = Vec::new();
             self.warning = None;
             self.props = props;
@@ -148,7 +120,8 @@ impl Component for Index {
                 <div class="row row-cols-3 row-cols-md-4 g-2">
                     {
                         self
-                            .deal
+                            .pack
+                            .hand()
                             .iter()
                             .map(|card| {
                                 let msg = Self::Message::OnCardClick(*card);

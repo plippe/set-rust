@@ -44,4 +44,8 @@ impl Set {
             }
         }
     }
+
+    pub fn contains(&self, card: Card) -> bool {
+        [self.0, self.1, self.2].contains(&card)
+    }
 }
