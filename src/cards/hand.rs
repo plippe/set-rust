@@ -23,7 +23,7 @@ impl Hand {
         let mut stock = stock.clone();
         let mut cards = Vec::new();
 
-        while !Self::is_valid(&cards) {
+        while !Self::is_valid(&cards) && Self::is_swap(&cards, set) {
             cards = self
                 .cards
                 .clone()
@@ -52,5 +52,9 @@ impl Hand {
                 .iter()
                 .tuple_combinations()
                 .any(|(a, b, c)| Set::try_from_cards(*a, *b, *c).is_ok())
+    }
+
+    fn is_swap(cards: &[Card], set: &Set) -> bool {
+        !cards.iter().any(|&c| set.contains(c))
     }
 }
