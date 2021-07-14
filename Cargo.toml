@@ -13,3 +13,7 @@ getrandom = { version = "0.2.3", features = ["js"] }
 rand = "0.8.4"
 yew = "0.18.0"
 yew-router = "0.15.0"
+
+[dev-dependencies]
+quickcheck = "1.0.3"
+quickcheck_macros = "1.0.0"
