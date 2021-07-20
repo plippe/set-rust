@@ -129,7 +129,7 @@ impl Component for Index {
     fn view(&self) -> Html {
         html! {
             <>
-                <div class="row row-cols-3 row-cols-md-4 g-2">
+                <div class="row row-cols-3 row-cols-md-4 g-2" style="height: calc(100vh - 80px); max-height: calc(100vh - 80px);">
                     {
                         self
                             .hand
